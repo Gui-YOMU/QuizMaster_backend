@@ -2,7 +2,7 @@ model Question {
     id Int @id @default(autoincrement())
     type String? @db.VarChar(50)
     subject String? @db.VarChar(50)
-    query String @db.Text @default("QUESTION")
+    query String @db.VarChar(500) @default("QUESTION")
     timer Int @default(10)
     points Int @default(20)
     answers Answer[]
