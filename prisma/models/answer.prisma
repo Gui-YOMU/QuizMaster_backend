@@ -1,0 +1,8 @@
+model Answer {
+    id Int @id @default(autoincrement())
+    letter String? @db.Char(1)
+    value String @db.VarChar(100)
+    isGoodAnswer Boolean
+    question Question @relation(fields: [id_question], references: [id])
+    id_question Int
+}

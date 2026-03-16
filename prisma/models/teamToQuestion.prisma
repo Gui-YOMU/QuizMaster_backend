@@ -1,0 +1,11 @@
+model TeamToQuestion {
+    id Int @id @default(autoincrement())
+    room Room @relation(fields: [id_room], references: [id])
+    id_room Int
+    team Team @relation(fields: [id_team], references: [id])
+    id_team Int
+    question Question @relation(fields: [id_question], references: [id])
+    id_question Int
+    teamAnswer String? @db.VarChar(100)
+    result Boolean?
+}

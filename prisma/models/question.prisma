@@ -1,0 +1,13 @@
+model Question {
+    id Int @id @default(autoincrement())
+    type String? @db.VarChar(50)
+    subject String? @db.VarChar(50)
+    query String @db.Text @default("QUESTION")
+    timer Int @default(10)
+    points Int @default(20)
+    answers Answer[]
+    items Item[]
+    quiz Quiz @relation(fields: [id_quiz], references: [id])
+    id_quiz Int
+    teamToQuestion TeamToQuestion[]
+}

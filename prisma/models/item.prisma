@@ -1,0 +1,6 @@
+model Item {
+    id Int @id @default(autoincrement())
+    content String @db.VarChar(100)
+    question Question @relation(fields: [id_question], references: [id])
+    id_question Int
+}

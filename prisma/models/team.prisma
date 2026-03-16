@@ -1,0 +1,11 @@
+model Team {
+    id Int @id @default(autoincrement())
+    teamName String @db.VarChar(50)
+    teamScore Int?
+    teamRank Int?
+    teamBadAnswers Int?
+    room Room @relation(fields: [id_room], references: [id])
+    id_room Int
+    teamToQuestion TeamToQuestion[]
+    users User[]
+}

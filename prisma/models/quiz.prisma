@@ -1,0 +1,11 @@
+model Quiz {
+    id Int @id @default(autoincrement())
+    quizName String @db.VarChar(50)
+    description String? @db.Text
+    createdAt DateTime @default(now())
+    updatedAt DateTime?
+    questions Question[]
+    user User @relation(fields: [id_user], references: [id])
+    id_user Int
+    rooms Room[]
+}
