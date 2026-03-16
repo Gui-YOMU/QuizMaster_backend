@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Bienvenue." });
+  res.json({ page: "login" });
 });
 
 app.use(userRouter);
