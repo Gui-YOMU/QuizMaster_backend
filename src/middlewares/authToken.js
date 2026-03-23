@@ -12,8 +12,9 @@ export function authToken(req, res, next) {
   
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded;
-    res.json({ success: "Token vérifié." });
+    req.headers['x-user-id'] = decoded.id;
+    req.headers['x-user-role'] = decoded.role;
+    next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ error: 'Token expiré' });
@@ -21,8 +22,3 @@ export function authToken(req, res, next) {
     return res.status(403).json({ error: 'Token invalide' });
   }
 }
-
-// Usage
-// app.get('/profile', authenticateToken, (req, res) => {
-//   res.json({ user: req.user });
-// });

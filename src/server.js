@@ -17,13 +17,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(
-  session({
-    secret: process.env.SECRET,
-    resave: true,
-    saveUninitialized: true,
-  }),
-);
 
 app.get("/", (req, res) => {
   res.json({ page: "login" });

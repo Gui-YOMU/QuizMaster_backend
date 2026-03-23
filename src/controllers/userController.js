@@ -1,8 +1,14 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { adapter } from "../../prisma/adapter.js";
+import bcrypt from "bcrypt";
+import escape from "escape-html";
 import { generateToken } from "../middlewares/generateToken.js";
+import { hashPasswordExtension } from "../../prisma/extensions/hashPasswordExtension.js";
+import { checkRegexExtension } from "../../prisma/extensions/checkRegexExtension.js";
 
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({ adapter })
+  .$extends(checkRegexExtension)
+  .$extends(hashPasswordExtension);
 
 export async function createUser(req, res) {
   const { lastName, firstName, surname, mail, password, confirmPassword } =
@@ -11,10 +17,10 @@ export async function createUser(req, res) {
     if (password === confirmPassword) {
       await prisma.user.create({
         data: {
-          lastName: lastName,
-          firstName: firstName,
-          surname: surname !== "" ? surname : null,
-          mail: mail,
+          lastName: escape(lastName),
+          firstName: escape(firstName),
+          surname: surname !== "" ? escape(surname) : null,
+          mail: escape(mail),
           password: password,
         },
       });
@@ -33,13 +39,16 @@ export async function login(req, res) {
   try {
     const user = await prisma.user.findUnique({
       where: {
-        mail: mail,
+        mail: escape(mail),
       },
     });
     if (user) {
-      if (user.password === password) {
-        req.session.user = user.id;
-        const token = generateToken({ id: user.id, time: Date() })
+      if (await bcrypt.compare(escape(password), user.password)) {
+        const token = generateToken({
+          id: user.id,
+          role: user.role,
+          time: Date(),
+        });
         res.json({ success: "Connexion effectuée avec succès.", token: token });
       } else {
         throw new Error("Le mot de passe est incorrect.");
@@ -50,5 +59,24 @@ export async function login(req, res) {
   } catch (error) {
     console.error(error);
     res.json({ error: "La connexion a échoué." });
+  }
+}
+
+export async function getProfile(req, res) {
+  const id = req.headers['x-user-id'];
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    })
+    if (user) {
+      res.json({ success: "Informations du profil récupérées.", user: user });
+    } else {
+      throw new Error("L'utilisateur n'existe pas.");
+    }
+  } catch (error) {
+    console.error(error);
+    res.json({ error: "Erreur lors de l'affichage du profil." });
   }
 }
