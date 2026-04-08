@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import session from "express-session";
 import { answerRouter } from "./routers/answerRouter.js";
 import { itemRouter } from "./routers/itemRouter.js";
 import { userRouter } from "./routers/userRouter.js";
